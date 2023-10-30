@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	
+	<flow name="getallcustomersfromcustomerssapi" doc:id="42027048-17e3-43bb-a917-1570b97c58d7" >
+		<http:request method="GET" doc:name="GetAllCustomersFromSapi" doc:id="6509eaec-f65a-417a-beba-00a978cf7390" config-ref="CUSTOMER_SAPI_HTTP_REQUEST_CONFIGURATION" path="/customers" />
+	</flow>
+	<flow name="getcustomerByIdFromCustomersSapi" doc:id="3682599f-c528-4af4-b2dd-3d739764d9e6" >
+		<http:request method="GET" doc:name="Request" doc:id="4bdc1142-23dd-40bf-a97d-70f1d42f64e3" config-ref="CUSTOMER_SAPI_HTTP_REQUEST_CONFIGURATION" path="/customers/{id}">
+				<http:uri-params><![CDATA[#[{
+	id: if(vars.id?) vars.id else payload
+}]]]></http:uri-params>
+			</http:request>
+	</flow>
+</mule>
