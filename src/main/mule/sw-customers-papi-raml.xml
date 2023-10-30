@@ -3,7 +3,7 @@
     <http:listener-config name="sw-customers-papi-raml-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
-    <apikit:config name="sw-customers-papi-raml-config" api="resource::dbf43717-03d0-4c7c-b36b-37ff146429d7:sw-customers-papi-raml:1.0.0:raml:zip:sw-customers-papi-raml.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="sw-customers-papi-raml-config" api="resource::dbf43717-03d0-4c7c-b36b-37ff146429d7:sw-customers-papi-raml:1.0.1:raml:zip:sw-customers-papi-raml.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="sw-customers-papi-raml-main">
         <http:listener config-ref="sw-customers-papi-raml-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -124,10 +124,10 @@ output application/json
         </error-handler>
     </flow>
     <flow name="get:\customers:sw-customers-papi-raml-config">
-        <flow-ref doc:name="getallcustomersfromcustomerssapi" doc:id="5e4ab06f-3519-47f7-8f63-ccda7eb60f84" name="getallcustomersfromcustomerssapi"/>
-		<ee:transform doc:name="Transform Message" doc:id="24ce569a-1095-4720-be19-b2ab62b20aaf" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+        <flow-ref doc:name="getallcustomersfromcustomerssapi" doc:id="5e4ab06f-3519-47f7-8f63-ccda7eb60f84" name="getallcustomersfromcustomerssapi" />
+        <ee:transform doc:name="Transform Message" doc:id="24ce569a-1095-4720-be19-b2ab62b20aaf">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 
 
@@ -150,8 +150,8 @@ fun getAddresses(addresses) = addresses map (address) ->
 
 ---
 payload map (item) -> mapcustomer(item)]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
+            </ee:message>
+        </ee:transform>
     </flow>
     <flow name="get:\customers\(id):sw-customers-papi-raml-config">
         <ee:transform doc:name="Transform Message">
@@ -159,10 +159,10 @@ payload map (item) -> mapcustomer(item)]]></ee:set-payload>
                 <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-		<flow-ref doc:name="getcustomerByIdFromCustomersSapi" doc:id="8617c3eb-1d55-42c5-ac21-e6014d9c31da" name="getcustomerByIdFromCustomersSapi"/>
-		<ee:transform doc:name="Transform Message" doc:id="00078fe9-1fa4-4044-844b-37aee783fe58" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+        <flow-ref doc:name="getcustomerByIdFromCustomersSapi" doc:id="8617c3eb-1d55-42c5-ac21-e6014d9c31da" name="getcustomerByIdFromCustomersSapi" />
+        <ee:transform doc:name="Transform Message" doc:id="00078fe9-1fa4-4044-844b-37aee783fe58">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 
 fun mapcustomer(customer) ={
@@ -180,9 +180,25 @@ fun getAddresses(addresses) = addresses map (address) ->
     address.city++ ","++ address.pincode
 
 ---
-mapcustomer(payload) 
-]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
+mapcustomer(payload)]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="get:\customers\(id)\orders:sw-customers-papi-raml-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+		<flow-ref doc:name="getOrdersOfCustomer" doc:id="0cffe638-ddad-477d-afe6-9de5be603353" name="getOrdersOfCustomer"/>
+    </flow>
+    <flow name="get:\customers\(id)\orders\(orderId):sw-customers-papi-raml-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
+                <ee:set-variable variableName="orderId">attributes.uriParams.'orderId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+		<flow-ref doc:name="getOrderByOrderId" doc:id="0f83a869-fae0-43b8-b9bf-44a91af952f0" name="getOrderByOrderId"/>
     </flow>
 </mule>
